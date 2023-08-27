@@ -1,20 +1,14 @@
 package main
 
 import (
-	v1 "github.com/IlyaZayats/dynus/internal/api/v1"
+	"github.com/IlyaZayats/dynus/internal/api/handlers/v1"
+	"github.com/IlyaZayats/dynus/internal/api/server"
+	"github.com/IlyaZayats/dynus/internal/db/postgres"
 )
 
 func main() {
-	r := v1.NewHandlers()
-	r.Init()
-	defer r.CloseConnection()
-
-	//r := gin.New()
-
-	//r.GET("/ping", func(c *gin.Context) {
-	//	c.JSON(http.StatusOK, gin.H{
-	//		"message": "pong",
-	//	})
-	//})
-
+	database := postgres.OpenConnection()
+	route := v1.NewHandlers(&database)
+	r := server.InitNewServer(route)
+	r.Run()
 }
