@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1ee33e2d-c142-454b-a316-a60b609da2d4" name="Changes" comment="Minor fixes">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dynus_project.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/Readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/postgres/init-db.sql" beforeDir="false" afterPath="$PROJECT_DIR$/build/postgres/init-db.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/dynus/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/dynus/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/handlers/v1/handlers.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/handlers/v1/requests.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/routing/routing.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/api/server/server.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/db/connect.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/db/connect.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/db/controller.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/db/postgres/postgres.go" beforeDir="false" />
-    </list>
+    <list default="true" id="1ee33e2d-c142-454b-a316-a60b609da2d4" name="Changes" comment="Additional tasks completed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -120,7 +103,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="v1: Main task completed" />
     <MESSAGE value="Minor fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Minor fixes" />
+    <MESSAGE value="Additional tasks completed" />
+    <option name="LAST_COMMIT_MESSAGE" value="Additional tasks completed" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
