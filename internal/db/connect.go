@@ -2,30 +2,20 @@ package db
 
 import (
 	"context"
-	"fmt"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"os"
+	"github.com/pkg/errors"
 )
 
-func NewPostgresConnection(dbUrl string) *pgx.Conn {
-	conn, err := pgx.Connect(context.Background(), dbUrl)
-	if err != nil {
-		fmt.Println(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	} else {
-		fmt.Println("DB connected!")
-	}
-	return conn
-}
-
-func NewPostgresPool(dbUrl string) *pgxpool.Pool {
+func NewPostgresPool(dbUrl string) (*pgxpool.Pool, error) {
 	pool, err := pgxpool.New(context.Background(), dbUrl)
 	if err != nil {
-		fmt.Println(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	} else {
-		fmt.Println("DB connected!")
+		return nil, errors.Wrap(err, "unable create pgxpool")
 	}
-	return pool
+
+	err = pool.Ping(context.Background())
+	if err != nil {
+		return nil, errors.Wrap(err, "unable ping database")
+	}
+
+	return pool, nil
 }
