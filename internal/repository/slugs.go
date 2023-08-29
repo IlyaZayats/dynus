@@ -94,7 +94,6 @@ func (r *PostgresSlugRepository) UpdateUserSlugs(user entity.User, insertSlugs, 
 			if err != nil {
 				return err
 			}
-			//logrus.Debugf(q)
 		}
 	}
 	return nil
