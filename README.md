@@ -1,42 +1,28 @@
-# 123
-cd /path/to/source
-docker-compose up
+# Сервис динамического сегментирования пользователей
+### Инструкция по запуску:
+Файл *compose.yaml* содержит инструкции по контейнерам dynus и postgres. Dockerfile контейнера dynus расположен в корневой папке проекта, а для postgres в *build/postgres*.  
+-Для того чтобы начать сборку, необходимо в командной строке, в директории с данным проектом прописать:
+*docker compose build --no-cache*
+-Для запуска проекта:
+*docker compose up -d*
+>Возможна ошибка в контейнере dynus при первой инициализации контейнера с БД, повторый запуск dynus решает данную проблему. 
 
-bearer="sgadgnkaslgtjkbnsMC,ssoeugfjk"
-endpopint="http://IP:port"
+### Требования к входным данным:
+-Названия сегментов могут содержать только заглавные и прописные латинские буквы, цифры, а так же нижние подчёркивания;
+-Процент пользователей, которые попадут в сегмент при его инициализации, должен быть указан в формате float, причем принадлежать отрезку [0,1];
+-Id пользователя - целое положительное;
+-Месяц, по которому требуется получить сводку об обновленных записях в формате "YYYY-MM";
+-Ttl - строкой в формате временного интервала ("1 year", "1 month" и тд.)
+> В противном случае будет получен ответ 400 от сервера с указанием ошибки!
 
-curl -XGET -H"Content-Type: application/json" $endpopint/api/v1/{user_id}
-
-curl -XPUT -H"Content-Type: application/json" $endpopint/api/v1/slug \
-    -d '{"name": "AVITO_VOICE_MESSAGES"}'
-
-curl -XDELETE -H"Content-Type: application/json" $endpopint/api/v1/slug \
-    -d '{"name": "AVITO_VOICE_MESSAGES"}'
-
-curl -XPOST -H"Content-Type: application/json" $endpopint/api/v1/{user_id}/slug \
-    -d '{"user_id": 1000,
-    "slug": {
-        "add": ["AVITO_VOICE_MESSAGES"],
-        "remove": ["AVITO_VOICE_MESSAGES"]
-        }
-    }'
-
-curl -XPOST -H"Content-Type: application/json" localhost:8080/slugs/2 \-d '{"insert_slugs": ["AVITO_VOICE_MESSAGES", "AVITO_DISCOUNT_30"], "delete_slugs": []}'
-
-
-
-postgres://dynus:dynus@localhost:5432/dynus
-
-#
-
-curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/2
-
-curl -XPUT -H"Content-Type: application/json" localhost:8090/slugs \-d '{"name": "AVITO_VOICE_MESSAGES", "chance": "0.1"}'
-
-curl -XPOST -H"Content-Type: application/json" localhost:8080/slugs/6 \-d '{"insert_slugs": ["AVITO_VOICE_MESSAGES2"], "delete_slugs": ["AVITO_VOICE_MESSAGES9"], "ttl": {"AVITO_VOICE_MESSAGES2" : "1 hour"}}'
-
-curl -XDELETE -H"Content-Type: application/json" localhost:8090/slugs \-d '{"name": "AVITO_VOICE_MESSAGES"}'
-
-curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/history/2023-08'
-
-C:/Users/Mylky/sdk/go1.19/bin/go.exe get
+### CURL HTTP запросы к API:
+-Создание сегмента:
+*curl -XPUT -H"Content-Type: application/json" localhost:8090/slugs \-d '{"name": "<ИМЯ_СЕГМЕНТА>", "chance": "<ПРОЦЕНТ_ПОЛЬЗОВАТЕЛЕЙ_КОТОРЫЕ_БУДУТ_ДОБАВЛЕНЫ_АВТОМАТИЧЕСКИ>"}'*
+-Удаление сегмента:
+*curl -XDELETE -H"Content-Type: application/json" localhost:8090/slugs \-d '{"name": "<ИМЯ_СЕГМЕНТА>"}'*
+-Получение сегментов пользователя:
+*curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/<ID_ПОЛЬЗОВАТЕЛЯ>*
+-Получение месячной сводки:
+*curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/history/<ГОД>-<МЕСЯЦ>*
+-Добавление пользователя в сегменты, а так же ttl:
+*curl -XPOST -H"Content-Type: application/json" localhost:8090/slugs/<ID_ПОЛЬЗОВАТЕЛЯ> \-d '{"insert_slugs": [<НАЗВАНИЯ_СЕГЕМЕНТОВ_К_ДОБАЛЕНИЮ>, "..."], "delete_slugs": ["<НАЗВАНИЯ_СЕГЕМЕНТОВ_К_УДАЛЕНИЮ>", "..."], "ttl": {"<ИМЕНА_СЕГМЕНТОВ_С_TTL>" : "<TTL>"}}'*
