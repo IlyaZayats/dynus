@@ -24,14 +24,12 @@ func main() {
 	)
 	//postgres://dynus:dynus@localhost:5555/dynus
 	//postgres://dynus:dynus@postgres:5432/dynus
-	flag.StringVar(&dbUrl, "db", "postgres://dynus:dynus@localhost:5555/dynus", "database connection url")
+	flag.StringVar(&dbUrl, "db", "postgres://dynus:dynus@postgres:5432/dynus", "database connection url")
 	flag.StringVar(&listen, "listen", ":8080", "server listen interface")
 	flag.StringVar(&logLevel, "log-level", "error", "log level: panic, fatal, error, warning, info, debug, trace")
 
 	flag.Parse()
 
-	//fmt.Println(dbUrl)
-	//fmt.Println(listen)
 	ctx := context.Background()
 
 	level, err := logrus.ParseLevel(logLevel)
@@ -82,8 +80,8 @@ func main() {
 	}()
 
 	go func(ctx context.Context) {
-		ticker := time.NewTimer(1 * time.Second)
 		for {
+			ticker := time.NewTimer(1 * time.Second)
 			select {
 			case <-ctx.Done():
 				doneC <- ctx.Err()

@@ -85,10 +85,6 @@ func (h *SlugHandlers) UpdateUserSlugs(c *gin.Context) {
 		return
 	}
 
-	//if !validateSlice(req.InsertSlugs) || !validateSlice(req.DeleteSlugs) || (len(req.InsertSlugs)+len(req.DeleteSlugs) == 0) {
-	//	c.JSON(http.StatusBadRequest, gin.H{"error": "slugs validation error"})
-	//	return
-	//}
 	if err := h.svc.UpdateUserSlugs(req.UserId, req.InsertSlugs, req.DeleteSlugs, req.Ttl); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "update slugs error", "text": err.Error()})
 		return

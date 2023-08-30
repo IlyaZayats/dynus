@@ -59,7 +59,6 @@ func (r *PostgresSlugRepository) UpdateUserSlugs(user entity.User, insertSlugs, 
 			if err != nil {
 				return err
 			}
-			//logrus.Debugf(q)
 		}
 	}
 
@@ -97,9 +96,7 @@ func (r *PostgresSlugRepository) UpdateUserSlugs(user entity.User, insertSlugs, 
 
 func (r *PostgresSlugRepository) GetActiveSlugs(user entity.User) ([]string, error) {
 	var activeSlugs []string
-	//sql :=
 	q := "SELECT Slugs.name FROM Slugs JOIN Link ON Link.slug_id=Slugs.id WHERE Link.is_valid=True AND Link.user_id=$1"
-	//q = "SELECT slug_id FROM Users_With_Slugs WHERE is_valid=True AND user_id=$1"
 	rows, err := r.db.Query(context.Background(), q, user.Id)
 	if err != nil && err.Error() != "no rows in result set" {
 		return activeSlugs, err
@@ -132,57 +129,19 @@ func (r *PostgresSlugRepository) InsertSlug(slug entity.Slug) error {
 	if _, err := r.db.Exec(context.Background(), q, slug.Name, slug.Chance); err != nil {
 		return err
 	}
-	//logrus.Debugf(fmt.Sprintf("%f", slug.Chance))
-	//fmt.Println(slug.Name)
-	//fmt.Println(slug.Chance)
 	if slug.Chance > 0 {
 		sql := fmt.Sprintf("INSERT INTO Link (user_id, slug_id) SELECT t.user_id as user_id, (SELECT id from Slugs WHERE name='%s') as slug_id FROM (SELECT id as user_id FROM Users ORDER BY random() LIMIT (SELECT (count(*) * %f) AS user FROM Users) ) as t", slug.Name, slug.Chance)
 		if _, err := r.db.Exec(context.Background(), sql); err != nil {
 			return err
 		}
 		fmt.Println(sql)
-		//fmt.Println(q)
-
-		//sql := "SELECT id FROM Users"
-		//rows, err := r.db.Query(context.Background(), sql)
-		//if err != nil && err.Error() != "no rows in result set" {
-		//	return err
-		//}
-		//users, err := parseRowsToSlice(rows)
-		////fmt.Println(users)
-		//countOfUsers := int(math.Round(float64(len(users)) * slug.Chance))
-		//rand.Seed(time.Now().Unix())
-		//var str string
-		////var data []string
-		//q := "INSERT INTO Link (user_id, slug_id) VALUES "
-		////j := 1
-		//if countOfUsers > 0 {
-		//	for i := 0; i < countOfUsers; i++ {
-		//		pickIndex := rand.Intn(len(users))
-		//		str = fmt.Sprintf("(%s,(SELECT id FROM Slugs WHERE name='%s')),", users[pickIndex], slug.Name)
-		//		if i == countOfUsers-1 {
-		//			str = fmt.Sprintf("(%s,(SELECT id FROM Slugs WHERE name='%s'))", users[pickIndex], slug.Name)
-		//		}
-		//		q += str
-		//		//j += 2
-		//		//data = append(data, users[pickIndex], slug.Name)
-		//		users = append(users[:pickIndex], users[pickIndex:]...)
-		//	}
-		//	//fmt.Println(data)
-		//	//fmt.Println(q)
-		//	//logrus.Debugf(q)
-		//	if _, err := r.db.Exec(context.Background(), q); err != nil {
-		//		//fmt.Println(err.Error())
-		//		return err
-		//	}
-		//}
 	}
 
 	return nil
 }
 
 func (r *PostgresSlugRepository) CleanupByTTL() error {
-	q := "UPDATE Link SET is_valid=False WHERE created_at+ttl<now()"
+	q := "UPDATE Link SET is_valid=False WHERE created_at+ttl<now() AND is_valid=True"
 	_, err := r.db.Exec(context.Background(), q)
 	if err != nil {
 		return err
@@ -212,7 +171,7 @@ func (r *PostgresSlugRepository) GetHistory(date string) ([]entity.History, erro
 	lower := dateCarbon.AddMonths(-1).ToDateTimeString()
 	q := "SELECT Link.user_id, Slugs.name, Link.created_at FROM Link " +
 		"JOIN Slugs ON Slugs.id = Link.slug_id " +
-		"WHERE Link.is_valid=True AND Link.created_at>$1 AND Link.created_at<$2"
+		"WHERE Link.created_at>$1 AND Link.created_at<$2"
 	rows, err := r.db.Query(context.Background(), q, lower, upper)
 	if err != nil {
 		return history, err
@@ -235,15 +194,3 @@ func (r *PostgresSlugRepository) GetHistory(date string) ([]entity.History, erro
 	history = append(history1, history2...)
 	return history, nil
 }
-
-/*
-INSERT INTO user_slug (user_id, slug_id)
-    SELECT
-        t.user_id as user_id,
-        (SELECT id FROM slug WHERE name = 'SLUG_NAME') as slug_id
-    FROM (
-        SELECT id as user_id FROM user ORDER BY random() LIMIT (
-            SELECT (count(*) / 10) AS user FROM user
-        )
-    ) as t
-*/

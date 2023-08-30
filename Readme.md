@@ -37,4 +37,6 @@ curl -XPOST -H"Content-Type: application/json" localhost:8080/slugs/6 \-d '{"ins
 
 curl -XDELETE -H"Content-Type: application/json" localhost:8090/slugs \-d '{"name": "AVITO_VOICE_MESSAGES"}'
 
+curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/history/2023-08'
+
 C:/Users/Mylky/sdk/go1.19/bin/go.exe get

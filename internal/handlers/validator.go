@@ -58,7 +58,6 @@ func ChanceValidator(fl validator.FieldLevel) bool {
 	return true
 }
 
-// (0[1-9]|1[1,2])(\/|-)(19|20)\d{2}
 func DateMValidator(fl validator.FieldLevel) bool {
 	value := fl.Field().Interface().(string)
 	if matched, err := regexp.MatchString("(19|20)\\d{2}(\\/|-)(0[1-9]|1[1,2])", value); !matched || err != nil {
