@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"github.com/IlyaZayats/dynus/internal/db"
 	"github.com/IlyaZayats/dynus/internal/handlers"
 	"github.com/IlyaZayats/dynus/internal/repository"
@@ -19,23 +18,27 @@ import (
 func main() {
 
 	var (
-		dbUrl  string
-		listen string
+		dbUrl    string
+		listen   string
+		logLevel string
 	)
 	//postgres://dynus:dynus@localhost:5555/dynus
 	//postgres://dynus:dynus@postgres:5432/dynus
 	flag.StringVar(&dbUrl, "db", "postgres://dynus:dynus@localhost:5555/dynus", "database connection url")
 	flag.StringVar(&listen, "listen", ":8080", "server listen interface")
+	flag.StringVar(&logLevel, "log-level", "error", "log level: panic, fatal, error, warning, info, debug, trace")
 
 	flag.Parse()
 
-	fmt.Println(dbUrl)
-	fmt.Println(listen)
-	//
+	//fmt.Println(dbUrl)
+	//fmt.Println(listen)
 	ctx := context.Background()
 
-	//dbUrl := "postgres://dynus:dynus@postgres:5432/dynus"
-	//listen := "localhost:8080"
+	level, err := logrus.ParseLevel(logLevel)
+	if err != nil {
+		logrus.Panicf("unable to get log level: %v", err)
+	}
+	logrus.SetLevel(level)
 
 	dbc, err := db.NewPostgresPool(dbUrl)
 	if err != nil {

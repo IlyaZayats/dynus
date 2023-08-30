@@ -9,11 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/pkg/errors"
 	"github.com/samber/lo"
-	"math"
-	"math/rand"
-	"time"
 )
 
 type PostgresSlugRepository struct {
@@ -137,46 +133,51 @@ func (r *PostgresSlugRepository) InsertSlug(slug entity.Slug) error {
 		return err
 	}
 	//logrus.Debugf(fmt.Sprintf("%f", slug.Chance))
-	fmt.Println(slug.Name)
-	fmt.Println(slug.Chance)
+	//fmt.Println(slug.Name)
+	//fmt.Println(slug.Chance)
 	if slug.Chance > 0 {
-		sql := "SELECT id FROM Users"
-		rows, err := r.db.Query(context.Background(), sql)
-		if err != nil && err.Error() != "no rows in result set" {
+		sql := fmt.Sprintf("INSERT INTO Link (user_id, slug_id) SELECT t.user_id as user_id, (SELECT id from Slugs WHERE name='%s') as slug_id FROM (SELECT id as user_id FROM Users ORDER BY random() LIMIT (SELECT (count(*) * %f) AS user FROM Users) ) as t", slug.Name, slug.Chance)
+		if _, err := r.db.Exec(context.Background(), sql); err != nil {
 			return err
 		}
-		users, err := parseRowsToSlice(rows)
-		fmt.Println(users)
-		countOfUsers := int(math.Round(float64(len(users)) * slug.Chance))
-		rand.Seed(time.Now().Unix())
-		var str string
-		//var data []string
-		q := "INSERT INTO Link (user_id, slug_id) VALUES "
-		//j := 1
-		if countOfUsers > 0 {
-			for i := 0; i < countOfUsers; i++ {
-				pickIndex := rand.Intn(len(users))
-				str = fmt.Sprintf("(%s,(SELECT id FROM Slugs WHERE name='%s')),", users[pickIndex], slug.Name)
-				if i == countOfUsers-1 {
-					str = fmt.Sprintf("(%s,(SELECT id FROM Slugs WHERE name='%s'))", users[pickIndex], slug.Name)
-				}
-				q += str
-				//j += 2
-				//data = append(data, users[pickIndex], slug.Name)
-				users = append(users[:pickIndex], users[pickIndex:]...)
-			}
-			//fmt.Println(data)
-			fmt.Println(q)
-			//logrus.Debugf(q)
-			if _, err := r.db.Exec(context.Background(), q); err != nil {
-				fmt.Println(err.Error())
-				return err
-			}
-		} else {
-			return errors.New("Users table is empty!")
-		}
+		fmt.Println(sql)
+		//fmt.Println(q)
 
+		//sql := "SELECT id FROM Users"
+		//rows, err := r.db.Query(context.Background(), sql)
+		//if err != nil && err.Error() != "no rows in result set" {
+		//	return err
+		//}
+		//users, err := parseRowsToSlice(rows)
+		////fmt.Println(users)
+		//countOfUsers := int(math.Round(float64(len(users)) * slug.Chance))
+		//rand.Seed(time.Now().Unix())
+		//var str string
+		////var data []string
+		//q := "INSERT INTO Link (user_id, slug_id) VALUES "
+		////j := 1
+		//if countOfUsers > 0 {
+		//	for i := 0; i < countOfUsers; i++ {
+		//		pickIndex := rand.Intn(len(users))
+		//		str = fmt.Sprintf("(%s,(SELECT id FROM Slugs WHERE name='%s')),", users[pickIndex], slug.Name)
+		//		if i == countOfUsers-1 {
+		//			str = fmt.Sprintf("(%s,(SELECT id FROM Slugs WHERE name='%s'))", users[pickIndex], slug.Name)
+		//		}
+		//		q += str
+		//		//j += 2
+		//		//data = append(data, users[pickIndex], slug.Name)
+		//		users = append(users[:pickIndex], users[pickIndex:]...)
+		//	}
+		//	//fmt.Println(data)
+		//	//fmt.Println(q)
+		//	//logrus.Debugf(q)
+		//	if _, err := r.db.Exec(context.Background(), q); err != nil {
+		//		//fmt.Println(err.Error())
+		//		return err
+		//	}
+		//}
 	}
+
 	return nil
 }
 

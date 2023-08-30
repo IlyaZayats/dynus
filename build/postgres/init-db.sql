@@ -38,4 +38,4 @@ CREATE TRIGGER tr_updated_at_employ BEFORE UPDATE ON Slugs
 CREATE TRIGGER tr_updated_at_employ BEFORE UPDATE ON Link
     FOR EACH ROW EXECUTE PROCEDURE tr_updated_at();
 
-insert into users (id) select * from generate_series(1, 100)
+insert into users (id) select * from generate_series(1, 1000000)
