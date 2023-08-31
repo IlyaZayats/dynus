@@ -80,8 +80,8 @@ func main() {
 	}()
 
 	go func(ctx context.Context) {
+		ticker := time.NewTicker(1 * time.Second)
 		for {
-			ticker := time.NewTimer(1 * time.Second)
 			select {
 			case <-ctx.Done():
 				doneC <- ctx.Err()
