@@ -12,15 +12,31 @@
 
 ### CURL HTTP запросы к API:
 
+- Создание сегмента:
+`curl -XPUT -H"Content-Type: application/json" localhost:8090/slugs \-d `
+`'{`
+$~~~~~~~~$`"name": "<ИМЯ_СЕГМЕНТА>",`
+$~~~~~~~~$` "chance": "<ПРОЦЕНТ_ПОЛЬЗОВАТЕЛЕЙ_КОТОРЫЕ_БУДУТ_ДОБАВЛЕНЫ_АВТОМАТИЧЕСКИ>"`
+`}'`
+- Удаление сегмента:
+`curl -XDELETE -H"Content-Type: application/json" localhost:8090/slugs \-d `
+`'{`
+$~~~~~~~~$`"name": "<ИМЯ_СЕГМЕНТА>"`
+`}'`
+- Получение сегментов пользователя:
+`curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/<ID_ПОЛЬЗОВАТЕЛЯ>`
 
-    - Создание сегмента:
-    `curl -XPUT -H"Content-Type: application/json" localhost:8090/slugs \-d '{"name": "<ИМЯ_СЕГМЕНТА>", "chance": "<ПРОЦЕНТ_ПОЛЬЗОВАТЕЛЕЙ_КОТОРЫЕ_БУДУТ_ДОБАВЛЕНЫ_АВТОМАТИЧЕСКИ>"}'`
-    - Удаление сегмента:
-    `curl -XDELETE -H"Content-Type: application/json" localhost:8090/slugs \-d '{"name": "<ИМЯ_СЕГМЕНТА>"}'`
-    - Получение сегментов пользователя:
-    `curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/<ID_ПОЛЬЗОВАТЕЛЯ>`
-    - Получение месячной сводки:
-    `curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/history/<ГОД>-<МЕСЯЦ>`
-    - Добавление пользователя в сегменты, а так же ttl:
-    `curl -XPOST -H"Content-Type: application/json" localhost:8090/slugs/<ID_ПОЛЬЗОВАТЕЛЯ> \-d '{"insert_slugs": [<НАЗВАНИЯ_СЕГЕМЕНТОВ_К_ДОБАЛЕНИЮ>, "..."], "delete_slugs": ["<НАЗВАНИЯ_СЕГЕМЕНТОВ_К_УДАЛЕНИЮ>", "..."], "ttl": {"<ИМЕНА_СЕГМЕНТОВ_С_TTL>" : "<ЗНАЧЕНИЕ_ИНТЕРВАЛА>"}}'
+- Получение месячной сводки:
+`curl -XGET -H"Content-Type: application/json" localhost:8090/slugs/history/<ГОД>-<МЕСЯЦ>`
+
+- Добавление пользователя в сегменты, а так же ttl:
+`curl -XPOST -H"Content-Type: application/json" localhost:8090/slugs/<ID_ПОЛЬЗОВАТЕЛЯ> -d\ `\
+`'{`\
+$~~~~~~~~$`"insert_slugs": [<НАЗВАНИЯ_СЕГЕМЕНТОВ_К_ДОБАЛЕНИЮ>, "..."], `\
+$~~~~~~~~$`"delete_slugs": ["<НАЗВАНИЯ_СЕГЕМЕНТОВ_К_УДАЛЕНИЮ>", "..."], `\
+$~~~~~~~~$`"ttl": {`\
+$~~~~~~~~$$~~~~~~~~$`"<ИМЕНА_СЕГМЕНТОВ_С_TTL>" : "<ЗНАЧЕНИЕ_ИНТЕРВАЛА>",`\
+$~~~~~~~~$$~~~~~~~~$`"..." : "..."`
+$~~~~~~~~$`}`\
+`}'`
 
